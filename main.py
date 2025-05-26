@@ -1,16 +1,18 @@
 import os
 import streamlit as st
-from langchain_groq import ChatGroq
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 from dotenv import load_dotenv
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain_groq import ChatGroq
 
+# Load environment variables
 load_dotenv()
 
-# Page Config
+# Streamlit config
 st.set_page_config(page_title="Agentic AI", page_icon="🤖", layout="centered")
 
-# Custom CSS for styling
+# Custom CSS
 st.markdown("""
     <style>
         .big-title {
@@ -41,12 +43,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Header
+# Title
 st.markdown('<div class="big-title">🤖 Agentic AI Assistant</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Ask anything. Get thoughtful responses.</div>', unsafe_allow_html=True)
 
-# Input box
+# Input
 user_input = st.text_input("💬 What’s your question?", placeholder="e.g. What is agentic AI?")
+
+# Session state for memory
+if "memory" not in st.session_state:
+    st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 if user_input:
     with st.spinner("Thinking... 🤔"):
@@ -55,9 +61,8 @@ if user_input:
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
 
-        prompt = PromptTemplate.from_template("You are an AI assistant. Respond to: {question}")
-        chain = LLMChain(llm=llm, prompt=prompt)
+        prompt = PromptTemplate.from_template("You are a helpful AI assistant. Answer this: {question}")
+        chain = LLMChain(llm=llm, prompt=prompt, memory=st.session_state.memory)
 
-        response = chain.run(user_input)
-
-    st.markdown(f'<div class="response-box">{response}</div>', unsafe_allow_html=True)
+        response = chain.run({"question": user_input})
+        st.markdown(f'<div class="response-box">{response}</div>', unsafe_allow_html=True)
