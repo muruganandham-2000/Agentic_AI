@@ -1,0 +1,8 @@
+llama3-70b-8192	Very powerful, best quality
+llama3-8b-8192	Lighter, faster alternative
+gemma-7b-it	Fine-tuned Google model
+gemma-2-7b-it	Fine-tuned Google model, lighter
+gemma-2-2b-it	Fine-tuned Google model, very light
+gemma-2-1b-it	Fine-tuned Google model, very very light
+gemma-2-350m-it	Fine-tuned Google model, extremely light
+gemma-2-70m-it	Fine-tuned Google model, extremely light
